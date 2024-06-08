@@ -7,15 +7,30 @@ pipeline {
                 echo 'Hello World'
             }
         }
+
         stage('Git Checkout') {
             steps {
-                ccheckout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'GitHub-id', url: 'https://github.com/dhuriviraj00/aws-docker.git']])
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'GitHub-id', url: 'https://github.com/dhuriviraj00/aws-docker.git']]])
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
                     sh 'docker build -t test .'
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    // Stop and remove any existing container with the same name
+                    sh 'docker stop test || true'
+                    sh 'docker rm test || true'
+
+                    // Run a new container
+                    sh 'docker run -d --name test test'
                 }
             }
         }
