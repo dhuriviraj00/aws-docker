@@ -29,8 +29,8 @@ pipeline {
                     sh 'docker stop test || true'
                     sh 'docker rm test || true'
 
-                    // Run a new container
-                    sh 'docker run -d --name test test'
+                    // Run a new container with port mapping
+                    sh 'docker run -d -p 5000:80 --name test test'
                 }
             }
         }
